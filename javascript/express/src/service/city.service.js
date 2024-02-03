@@ -1,6 +1,6 @@
-import { getCityCoordinates } from "./city.repository.js";
-import { getWeather } from "./openmeteo.client.js";
-import { getSunriseSunsetTimes } from "./sunrisesunset.client.js";
+import { getCityCoordinates } from "../repository/city.repository.js";
+import { getWeather } from "../client/openmeteo.client.js";
+import { getSunriseSunsetTimes } from "../client/sunrisesunset.client.js";
 
 export const getCityInfo = async (cityName) => {
   const citCoordinates = await getCityCoordinates(cityName);

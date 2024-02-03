@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getCityInfo } from "./city.service.js";
+import { getCityInfo } from "../service/city.service.js";
 
 const apis = Router();
 

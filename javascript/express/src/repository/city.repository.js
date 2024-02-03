@@ -1,4 +1,4 @@
-import connectionPool from "./mysql.db.js";
+import connectionPool from "../config/mysql.db.js";
 
 export const getCityCoordinates = async (cityName) => {
   try {
