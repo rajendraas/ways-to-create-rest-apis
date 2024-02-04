@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  sample-db:
+    image: mysql:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - ./data-dump.sql:/docker-entrypoint-initdb.d/data-dump.sql
+
+  springboot-app:
+    depends_on:
+      sample-db:
+        condition: service_started
+    build: ./java/sample-springboot-api
+    restart: on-failure
+    env_file: .env
+    ports:
+      - $SPRING_BOOT_LOCAL_PORT:$SPRING_BOOT_DOCKER_PORT
+    environment:
+      - MYSQLDB_HOST=$MYSQLDB_HOST
+      - MYSQLDB_USER=$MYSQLDB_USER
+      - MYSQLDB_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQLDB_DATABASE=$MYSQLDB_DATABASE
+      - MYSQLDB_LOCAL_PORT=$MYSQLDB_LOCAL_PORT
+      - MYSQLDB_DOCKER_PORT=$MYSQLDB_DOCKER_PORT
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+  express-app:
+    depends_on:
+      sample-db:
+        condition: service_started
+    build: ./javascript/express
+    restart: on-failure
+    env_file: .env
+    ports:
+      - $EXPRESS_LOCAL_PORT:$EXPRESS_DOCKER_PORT
+    environment:
+      - MYSQLDB_HOST=$MYSQLDB_HOST
+      - MYSQLDB_USER=$MYSQLDB_USER
+      - MYSQLDB_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQLDB_DATABASE=$MYSQLDB_DATABASE
+    stdin_open: true
+    tty: true
