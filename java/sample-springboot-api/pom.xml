@@ -13,6 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>sample-springboot-api</name>
 	<description>Create REST API with Spring boot</description>
+	<url>https://github.com/rajendrasatpute/ways-to-create-rest-apis</url>
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.0</spring-cloud.version>

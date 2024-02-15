@@ -35,6 +35,27 @@ services:
     stdin_open: true
     tty: true
 
+  springmvc-app:
+    depends_on:
+      sample-db:
+        condition: service_started
+    build: ./java/sample-springmvc-api
+    restart: on-failure
+    env_file: .env
+    ports:
+      - $SPRING_MVC_LOCAL_PORT:$SPRING_MVC_DOCKER_PORT
+    environment:
+      - MYSQLDB_HOST=$MYSQLDB_HOST
+      - MYSQLDB_USER=$MYSQLDB_USER
+      - MYSQLDB_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQLDB_DATABASE=$MYSQLDB_DATABASE
+      - MYSQLDB_LOCAL_PORT=$MYSQLDB_LOCAL_PORT
+      - MYSQLDB_DOCKER_PORT=$MYSQLDB_DOCKER_PORT
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
   express-app:
     depends_on:
       sample-db:
