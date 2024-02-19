@@ -1,35 +1,34 @@
-package io.github.rajendrasatpute.samplespringbootapi.controller;
+package io.github.rajendrasatpute.samplespringmvcapi.controller;
 
-import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
-import io.github.rajendrasatpute.samplespringbootapi.service.CityService;
+import io.github.rajendrasatpute.samplespringmvcapi.service.CityService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-@WebMvcTest(CityController.class)
+@ExtendWith(MockitoExtension.class)
 class CityControllerTest {
 
-    @MockBean
+    @Mock
     private CityService cityService;
 
-    @Autowired
-    private MockMvc mockMvc;
 
     @Test
     void shouldReturnSuccessResponseWhenThereIsNoError() throws Exception {
-        when(cityService.getCityInfo("pune")).thenReturn(CityInfoResponse.builder().build());
+        MockMvc mockMvc = standaloneSetup(new CityController(cityService)).build();
 
         mockMvc.perform(get("/city/pune")).andExpect(status().isOk());
     }
 
     @Test
     void shouldReturnNotFoundWhenWrongApiIsCalled() throws Exception {
+        MockMvc mockMvc = standaloneSetup(new CityController(cityService)).build();
+
         mockMvc.perform(get("/city")).andExpect(status().isNotFound());
     }
 
