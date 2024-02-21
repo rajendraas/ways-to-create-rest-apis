@@ -12,14 +12,23 @@ type OpenMeteoClient interface {
 	GetWeatherData(latitude string, longitude string) any
 }
 
+type openMeteoClient struct {
+	httpClient *http.Client
+}
+
 const (
 	openmeteoUrl = "https://api.open-meteo.com/v1/forecast?current=temperature_2m,wind_speed_10m&latitude=%s&longitude=%s&timezone=IST"
 )
 
-func GetWeatherData(latitude string, longitude string) any {
+func NewOpenMeteoClient(httpClient *http.Client) OpenMeteoClient {
+	return &openMeteoClient{httpClient: httpClient}
+}
+
+func (client *openMeteoClient) GetWeatherData(latitude string, longitude string) any {
 	url := fmt.Sprintf(openmeteoUrl, latitude, longitude)
-	response, err := http.Get(url)
-	if err != nil {
+	request, _ := http.NewRequest(http.MethodGet, url, nil)
+	response, err := client.httpClient.Do(request)
+	if err != nil || response.StatusCode != http.StatusOK {
 		return nil
 	}
 	var parsedResponse any

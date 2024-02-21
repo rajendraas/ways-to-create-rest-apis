@@ -11,11 +11,13 @@ type Service interface {
 }
 
 type service struct {
-	repository repository.Repository
+	repository          repository.Repository
+	openMeteoClient     client.OpenMeteoClient
+	sunriseSunsetClient client.SunriseSunsetClient
 }
 
-func New(repository repository.Repository) Service {
-	return &service{repository: repository}
+func New(repository repository.Repository, openMeteoClient client.OpenMeteoClient, sunriseSunsetClient client.SunriseSunsetClient) Service {
+	return &service{repository: repository, openMeteoClient: openMeteoClient, sunriseSunsetClient: sunriseSunsetClient}
 }
 
 func (s *service) GetCityInfo(cityName string) model.Response {
@@ -23,8 +25,8 @@ func (s *service) GetCityInfo(cityName string) model.Response {
 	if err != nil {
 		return model.Response{}
 	}
-	weather := client.GetWeatherData(city.Latitude, city.Longitude)
-	sunriseAndSunset := client.GetSunriseSunsetData(city.Latitude, city.Longitude)
+	weather := s.openMeteoClient.GetWeatherData(city.Latitude, city.Longitude)
+	sunriseAndSunset := s.sunriseSunsetClient.GetSunriseSunsetData(city.Latitude, city.Longitude)
 	return model.Response{
 		CityName:         city.CityName,
 		Latitude:         city.Latitude,

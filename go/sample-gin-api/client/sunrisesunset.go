@@ -12,14 +12,23 @@ type SunriseSunsetClient interface {
 	GetSunriseSunsetData(latitude string, longitude string) any
 }
 
+type sunriseSunsetClient struct {
+	httpClient *http.Client
+}
+
 const (
 	sunriseSunsetUrl = "https://api.sunrise-sunset.org/json?lat=%s&lng=%s&tzid=Asia/Kolkata"
 )
 
-func GetSunriseSunsetData(latitude string, longitude string) any {
+func NewSunriseSunsetClient(httpClient *http.Client) SunriseSunsetClient {
+	return &sunriseSunsetClient{httpClient: httpClient}
+}
+
+func (client *sunriseSunsetClient) GetSunriseSunsetData(latitude string, longitude string) any {
 	url := fmt.Sprintf(sunriseSunsetUrl, latitude, longitude)
-	response, err := http.Get(url)
-	if err != nil {
+	request, _ := http.NewRequest(http.MethodGet, url, nil)
+	response, err := client.httpClient.Do(request)
+	if err != nil || response.StatusCode != http.StatusOK {
 		return nil
 	}
 	var parsedResponse any
