@@ -1,1 +1,0 @@
-`mvn archetype:generate -DgroupId=io.github.rajendrasatpute -DartifactId=sample-springmvc-api -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4`
