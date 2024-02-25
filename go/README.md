@@ -4,4 +4,4 @@ This page includes the REST API implementation with GoLang. I've used version go
 
 There are multiple frameworks to implement REST APIs with GoLang, ex - Gin, Mux, Echo etc. Currently, we have Gin implementation.
 
-Other framework implementation will be added as the time permits.
+Other framework implementation will be added as the time permits. If you know a frameowrk, and want to contribute to this repo, please feel free to raise a pull request.
