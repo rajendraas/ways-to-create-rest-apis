@@ -13,12 +13,16 @@ services:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
     volumes:
       - ./data-dump.sql:/docker-entrypoint-initdb.d/data-dump.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   springboot-app:
     depends_on:
       sample-db:
-        condition: service_started
-    build: ./java/sample-springboot-api
+        condition: service_healthy
+    build: ../java/sample-springboot-api
     restart: on-failure
     env_file: .env
     ports:
@@ -38,8 +42,8 @@ services:
   springmvc-app:
     depends_on:
       sample-db:
-        condition: service_started
-    build: ./java/sample-springmvc-api
+        condition: service_healthy
+    build: ../java/sample-springmvc-api
     restart: on-failure
     env_file: .env
     ports:
@@ -59,8 +63,8 @@ services:
   express-app:
     depends_on:
       sample-db:
-        condition: service_started
-    build: ./javascript/express
+        condition: service_healthy
+    build: ../javascript/express
     restart: on-failure
     env_file: .env
     ports:
@@ -76,8 +80,8 @@ services:
   gin-app:
     depends_on:
       sample-db:
-        condition: service_started
-    build: ./go/sample-gin-api
+        condition: service_healthy
+    build: ../go/sample-gin-api
     restart: on-failure
     env_file: .env
     ports:
