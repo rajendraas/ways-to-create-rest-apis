@@ -3,6 +3,7 @@ package io.github.rajendrasatpute.samplespringbootapi.service;
 import io.github.rajendrasatpute.samplespringbootapi.client.OpenMeteoClient;
 import io.github.rajendrasatpute.samplespringbootapi.client.SunriseSunsetClient;
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
+import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
 import io.github.rajendrasatpute.samplespringbootapi.model.City;
 import io.github.rajendrasatpute.samplespringbootapi.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class CityService {
 
     public CityInfoResponse getCityInfo(String cityName) {
         City city = getCityCoordinates(cityName);
-        if(null == city) {
+        if (null == city) {
             return CityInfoResponse.builder().build();
         }
         Object sunriseAndSunset = getSunriseSunsetTimesForCity(city);
@@ -36,6 +37,15 @@ public class CityService {
                 .build();
     }
 
+    public void addCity(NewCityRequest newCityRequest) {
+        City city = City.builder()
+                .cityName(newCityRequest.getCityName())
+                .latitude(newCityRequest.getLatitude())
+                .longitude(newCityRequest.getLongitude())
+                .build();
+        cityRepository.save(city);
+    }
+
     private City getCityCoordinates(String cityName) {
         City city = null;
         try {
@@ -44,7 +54,7 @@ public class CityService {
                 city = cities.get(0);
             }
         } catch (Exception exception) {
-            log.error("Error while fetching city coordinates -  {}", exception);
+            log.error("Error while fetching city coordinates", exception);
         }
         return city;
     }
@@ -54,7 +64,7 @@ public class CityService {
         try {
             sunriseAndSunset = sunriseSunsetClient.getSunriseSunsetTimes(city.getLatitude(), city.getLongitude());
         } catch (Exception exception) {
-            log.error("Error while fetching sunset sunrise details -  {}", exception);
+            log.error("Error while fetching sunset sunrise details", exception);
         }
         return sunriseAndSunset;
     }
@@ -64,7 +74,7 @@ public class CityService {
         try {
             weather = openMeteoClient.getWeather(city.getLatitude(), city.getLongitude());
         } catch (Exception exception) {
-            log.error("Error while fetching weather details -  {}", exception);
+            log.error("Error while fetching weather details", exception);
         }
         return weather;
     }

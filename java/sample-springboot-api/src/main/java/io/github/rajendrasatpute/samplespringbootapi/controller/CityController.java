@@ -1,12 +1,13 @@
 package io.github.rajendrasatpute.samplespringbootapi.controller;
 
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
+import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
 import io.github.rajendrasatpute.samplespringbootapi.service.CityService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,5 +18,11 @@ public class CityController {
     @GetMapping("/city/{cityName}")
     public ResponseEntity<CityInfoResponse> getCityInfo(@PathVariable String cityName) {
         return ResponseEntity.ok().body(cityService.getCityInfo(cityName));
+    }
+
+    @PostMapping("/city")
+    public ResponseEntity<Object> addCity(@Valid @RequestBody NewCityRequest newCityRequest) {
+        cityService.addCity(newCityRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

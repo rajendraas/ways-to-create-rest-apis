@@ -5,20 +5,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="cities")
+@Table(name = "cities")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class City {
     @Id
-    @Column(name="city")
+    @Column(name = "city")
     private String cityName;
-    @Column(name="lat")
+    @Column(name = "lat")
     private String latitude;
-    @Column(name="lng")
+    @Column(name = "lng")
     private String longitude;
 }
