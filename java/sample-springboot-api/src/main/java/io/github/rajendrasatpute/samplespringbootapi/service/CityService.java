@@ -4,6 +4,8 @@ import io.github.rajendrasatpute.samplespringbootapi.client.OpenMeteoClient;
 import io.github.rajendrasatpute.samplespringbootapi.client.SunriseSunsetClient;
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
 import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringbootapi.model.City;
 import io.github.rajendrasatpute.samplespringbootapi.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +46,20 @@ public class CityService {
                 .longitude(newCityRequest.getLongitude())
                 .build();
         cityRepository.save(city);
+    }
+
+    public void updateCityCoordinates(String cityName, UpdateCityRequest updateCityRequest) throws CityNotFoundException {
+        if (null != getCityCoordinates(cityName)) {
+            City city = City.builder()
+                    .cityName(cityName)
+                    .latitude(updateCityRequest.getLatitude())
+                    .longitude(updateCityRequest.getLongitude())
+                    .build();
+
+            cityRepository.save(city);
+        } else {
+            throw new CityNotFoundException(cityName);
+        }
     }
 
     private City getCityCoordinates(String cityName) {

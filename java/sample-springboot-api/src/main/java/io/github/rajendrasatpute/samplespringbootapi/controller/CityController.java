@@ -2,6 +2,8 @@ package io.github.rajendrasatpute.samplespringbootapi.controller;
 
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
 import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringbootapi.service.CityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +26,11 @@ public class CityController {
     public ResponseEntity<Object> addCity(@Valid @RequestBody NewCityRequest newCityRequest) {
         cityService.addCity(newCityRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/city/{cityName}")
+    public ResponseEntity<Object> updateCityCoordinates(@PathVariable String cityName, @Valid @RequestBody UpdateCityRequest updateCityRequest) throws CityNotFoundException {
+        cityService.updateCityCoordinates(cityName, updateCityRequest);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

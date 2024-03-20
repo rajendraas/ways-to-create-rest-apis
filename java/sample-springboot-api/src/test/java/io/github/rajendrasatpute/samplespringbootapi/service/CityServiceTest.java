@@ -5,6 +5,8 @@ import io.github.rajendrasatpute.samplespringbootapi.client.OpenMeteoClient;
 import io.github.rajendrasatpute.samplespringbootapi.client.SunriseSunsetClient;
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
 import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringbootapi.model.City;
 import io.github.rajendrasatpute.samplespringbootapi.repository.CityRepository;
 import org.junit.jupiter.api.Nested;
@@ -19,8 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -144,6 +145,34 @@ class CityServiceTest {
             assertThrows(RuntimeException.class, () -> {
                 cityService.addCity(NewCityRequest.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build());
             });
+        }
+    }
+
+    @Nested
+    class UpdateCityCoordinates {
+        @Test
+        void shouldUpdateCityCoordinates() {
+            City city = new City("PUNE", "18.516726", "73.856255");
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of(city));
+
+            assertDoesNotThrow(() -> {
+                cityService.updateCityCoordinates("pune", UpdateCityRequest.builder().latitude("18.516728").longitude("73.856250").build());
+            });
+
+            verify(cityRepository, times(1)).findByCityName("PUNE");
+            verify(cityRepository, times(1)).save(new City("pune", "18.516728", "73.856250"));
+        }
+
+        @Test
+        void shouldThrowCityNotFoundExceptionWhenCityIsNotFoundInDB() {
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of());
+
+            assertThrows(CityNotFoundException.class, () -> {
+                cityService.updateCityCoordinates("pune", UpdateCityRequest.builder().latitude("18.516728").longitude("73.856250").build());
+            });
+
+            verify(cityRepository, times(1)).findByCityName("PUNE");
+            verify(cityRepository, times(0)).save(any());
         }
     }
 
