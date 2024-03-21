@@ -33,4 +33,10 @@ public class CityController {
         cityService.updateCityCoordinates(cityName, updateCityRequest);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @DeleteMapping("/city/{cityName}")
+    public ResponseEntity<Object> deleteCityCoordinates(@PathVariable String cityName) throws CityNotFoundException {
+        cityService.deleteCityCoordinates(cityName);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

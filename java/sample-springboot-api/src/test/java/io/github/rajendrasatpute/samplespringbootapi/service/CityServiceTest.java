@@ -18,6 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +68,7 @@ class CityServiceTest {
         @Test
         void shouldReturnEmptyWeatherIfWeatherAPIFails() throws IOException {
             Object sunriseAndSunsetResponse = objectMapper.readValue(new File("src/test/resources/responses/sunriseAndSunsetResponse.json"), Map.class);
-            City city = new City("PUNE", "18.516726", "73.856255");
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             CityInfoResponse expectedResponse = CityInfoResponse.builder()
                     .cityName(city.getCityName())
                     .latitude(city.getLatitude())
@@ -86,7 +88,7 @@ class CityServiceTest {
         @Test
         void shouldReturnEmptySunsetSunriseIfSunsetSunriseAPIFails() throws IOException {
             Object weather = objectMapper.readValue(new File("src/test/resources/responses/weatherResponse.json"), Map.class);
-            City city = new City("PUNE", "18.516726", "73.856255");
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             CityInfoResponse expectedResponse = CityInfoResponse.builder()
                     .cityName(city.getCityName())
                     .latitude(city.getLatitude())
@@ -107,7 +109,7 @@ class CityServiceTest {
         void shouldReturnAllData() throws IOException {
             Object weather = objectMapper.readValue(new File("src/test/resources/responses/weatherResponse.json"), Map.class);
             Object sunriseAndSunsetResponse = objectMapper.readValue(new File("src/test/resources/responses/sunriseAndSunsetResponse.json"), Map.class);
-            City city = new City("PUNE", "18.516726", "73.856255");
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             CityInfoResponse expectedResponse = CityInfoResponse.builder()
                     .cityName(city.getCityName())
                     .latitude(city.getLatitude())
@@ -130,7 +132,7 @@ class CityServiceTest {
     class AddCity {
         @Test
         void shouldSaveCityInDB() {
-            City city = new City("PUNE", "18.516726", "73.856255");
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
 
             cityService.addCity(NewCityRequest.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build());
 
@@ -139,7 +141,7 @@ class CityServiceTest {
 
         @Test
         void shouldThrowExceptionWhenThrown() {
-            City city = new City("PUNE", "18.516726", "73.856255");
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             doThrow(RuntimeException.class).when(cityRepository).save(city);
 
             assertThrows(RuntimeException.class, () -> {
@@ -152,7 +154,7 @@ class CityServiceTest {
     class UpdateCityCoordinates {
         @Test
         void shouldUpdateCityCoordinates() {
-            City city = new City("PUNE", "18.516726", "73.856255");
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             when(cityRepository.findByCityName("PUNE")).thenReturn(List.of(city));
 
             assertDoesNotThrow(() -> {
@@ -160,7 +162,7 @@ class CityServiceTest {
             });
 
             verify(cityRepository, times(1)).findByCityName("PUNE");
-            verify(cityRepository, times(1)).save(new City("pune", "18.516728", "73.856250"));
+            verify(cityRepository, times(1)).save(City.builder().cityName("PUNE").latitude("18.516728").longitude("73.856250").build());
         }
 
         @Test
@@ -169,6 +171,55 @@ class CityServiceTest {
 
             assertThrows(CityNotFoundException.class, () -> {
                 cityService.updateCityCoordinates("pune", UpdateCityRequest.builder().latitude("18.516728").longitude("73.856250").build());
+            });
+
+            verify(cityRepository, times(1)).findByCityName("PUNE");
+            verify(cityRepository, times(0)).save(any());
+        }
+    }
+
+    @Nested
+    class DeleteCityCoordinates {
+        @Test
+        void shouldDeleteCityCoordinates() {
+            City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of(city));
+
+            assertDoesNotThrow(() -> {
+                cityService.deleteCityCoordinates("pune");
+            });
+
+            verify(cityRepository, times(1)).findByCityName("PUNE");
+            verify(cityRepository, times(1)).save(
+                    City.builder().cityName("PUNE").latitude("18.516728").longitude("73.856250").deletionTimestamp(any()).build()
+            );
+        }
+
+        @Test
+        void shouldThrowCityNotFoundExceptionWhenCityIsNotFoundInDB() {
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of());
+
+            assertThrows(CityNotFoundException.class, () -> {
+                cityService.deleteCityCoordinates("pune");
+            });
+
+            verify(cityRepository, times(1)).findByCityName("PUNE");
+            verify(cityRepository, times(0)).save(any());
+        }
+
+        @Test
+        void shouldThrowCityNotFoundExceptionWhenCityIsAlreadySoftDeleted() {
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of(
+                    City.builder()
+                            .cityName("PUNE")
+                            .latitude("18.516728")
+                            .longitude("73.856250")
+                            .deletionTimestamp(Timestamp.from(Instant.now()))
+                            .build()
+            ));
+
+            assertThrows(CityNotFoundException.class, () -> {
+                cityService.deleteCityCoordinates("pune");
             });
 
             verify(cityRepository, times(1)).findByCityName("PUNE");

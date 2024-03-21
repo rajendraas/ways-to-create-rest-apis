@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -41,7 +43,7 @@ public class CityService {
 
     public void addCity(NewCityRequest newCityRequest) {
         City city = City.builder()
-                .cityName(newCityRequest.getCityName())
+                .cityName(newCityRequest.getCityName().toUpperCase())
                 .latitude(newCityRequest.getLatitude())
                 .longitude(newCityRequest.getLongitude())
                 .build();
@@ -51,7 +53,7 @@ public class CityService {
     public void updateCityCoordinates(String cityName, UpdateCityRequest updateCityRequest) throws CityNotFoundException {
         if (null != getCityCoordinates(cityName)) {
             City city = City.builder()
-                    .cityName(cityName)
+                    .cityName(cityName.toUpperCase())
                     .latitude(updateCityRequest.getLatitude())
                     .longitude(updateCityRequest.getLongitude())
                     .build();
@@ -62,11 +64,21 @@ public class CityService {
         }
     }
 
+    public void deleteCityCoordinates(String cityName) throws CityNotFoundException {
+        City cityToDelete = getCityCoordinates(cityName);
+        if (null != cityToDelete) {
+            cityToDelete.setDeletionTimestamp(Timestamp.from(Instant.now()));
+            cityRepository.save(cityToDelete);
+        } else {
+            throw new CityNotFoundException(cityName);
+        }
+    }
+
     private City getCityCoordinates(String cityName) {
         City city = null;
         try {
             List<City> cities = cityRepository.findByCityName(cityName.toUpperCase());
-            if (!cities.isEmpty()) {
+            if (!cities.isEmpty() && !cities.get(0).isDeleted()) {
                 city = cities.get(0);
             }
         } catch (Exception exception) {

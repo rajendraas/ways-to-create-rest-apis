@@ -163,4 +163,32 @@ class CityControllerTest {
             verify(cityService, times(1)).updateCityCoordinates("pune", request);
         }
     }
+
+    @Nested
+    class DeleteCityCoordinates {
+        @Test
+        void shouldReturnNotFoundIfCityIsNotFound() throws Exception {
+            doThrow(new CityNotFoundException("pune")).when(cityService).deleteCityCoordinates("pune");
+
+            mockMvc.perform(delete("/city/pune")).andExpect(status().isNotFound());
+        }
+
+        @Test
+        void shouldReturnInternalServerErrorIfDBConnectionFails() throws Exception {
+            doAnswer((invocation) -> {
+                throw new ConnectException("Connection refused");
+            }).when(cityService).deleteCityCoordinates("pune");
+
+            mockMvc.perform(delete("/city/pune")).andExpect(status().isInternalServerError());
+        }
+
+        @Test
+        void shouldReturnNoContentWhenDeletionIsSuccessful() throws Exception {
+            doNothing().when(cityService).deleteCityCoordinates("pune");
+
+            mockMvc.perform(delete("/city/pune")).andExpect(status().isNoContent());
+
+            verify(cityService, times(1)).deleteCityCoordinates("pune");
+        }
+    }
 }

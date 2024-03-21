@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Entity
 @Table(name = "cities")
 @AllArgsConstructor
@@ -23,4 +25,10 @@ public class City {
     private String latitude;
     @Column(name = "lng")
     private String longitude;
+    @Column(name = "deletionTimestamp")
+    private Timestamp deletionTimestamp;
+
+    public boolean isDeleted() {
+        return deletionTimestamp != null;
+    }
 }
