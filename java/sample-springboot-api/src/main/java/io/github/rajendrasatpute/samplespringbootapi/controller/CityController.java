@@ -19,7 +19,7 @@ public class CityController {
     private final CityService cityService;
 
     @GetMapping("/city/{cityName}")
-    public ResponseEntity<CityInfoResponse> getCityInfo(@PathVariable String cityName) {
+    public ResponseEntity<CityInfoResponse> getCityInfo(@PathVariable String cityName) throws CityNotFoundException {
         return ResponseEntity.ok().body(cityService.getCityInfo(cityName));
     }
 

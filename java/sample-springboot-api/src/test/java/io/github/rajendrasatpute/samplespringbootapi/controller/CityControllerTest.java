@@ -42,6 +42,22 @@ class CityControllerTest {
 
             mockMvc.perform(get("/city/pune")).andExpect(status().isOk());
         }
+
+        @Test
+        void shouldReturnNotFoundWhenCityIsNotFoundInDB() throws Exception {
+            doThrow(new CityNotFoundException("pune")).when(cityService).getCityInfo("pune");
+
+            mockMvc.perform(get("/city/pune")).andExpect(status().isNotFound());
+        }
+
+        @Test
+        void shouldReturnInternalServerErrorIfDBConnectionFails() throws Exception {
+            doAnswer((invocation) -> {
+                throw new ConnectException("Connection refused");
+            }).when(cityService).getCityInfo("pune");
+
+            mockMvc.perform(get("/city/pune")).andExpect(status().isInternalServerError());
+        }
     }
 
     @Nested

@@ -26,10 +26,10 @@ public class CityService {
     private final SunriseSunsetClient sunriseSunsetClient;
     private final OpenMeteoClient openMeteoClient;
 
-    public CityInfoResponse getCityInfo(String cityName) {
+    public CityInfoResponse getCityInfo(String cityName) throws CityNotFoundException {
         City city = getCityCoordinates(cityName);
         if (null == city) {
-            return CityInfoResponse.builder().build();
+            throw new CityNotFoundException(cityName);
         }
         Object sunriseAndSunset = getSunriseSunsetTimesForCity(city);
         Object weather = getWeatherForCity(city);
@@ -88,6 +88,7 @@ public class CityService {
             }
         } catch (Exception exception) {
             log.error("Error while fetching city coordinates", exception);
+            throw exception;
         }
         return city;
     }

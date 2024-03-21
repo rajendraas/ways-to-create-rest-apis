@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.ConnectException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -49,25 +49,27 @@ class CityServiceTest {
     @Nested
     class GetCityInfo {
         @Test
-        void shouldReturnEmptyCityInfoResponseIfCityIsNotFoundInDB() {
+        void shouldThrowCityNotFoundExceptionIfCityIsNotFoundInDB() throws CityNotFoundException {
             when(cityRepository.findByCityName("PUNE")).thenReturn(List.of());
 
-            CityInfoResponse cityInfoResponse = cityService.getCityInfo("pune");
-
-            assertEquals(CityInfoResponse.builder().build(), cityInfoResponse);
+            assertThrows(CityNotFoundException.class, () -> {
+                cityService.getCityInfo("pune");
+            });
         }
 
         @Test
-        void shouldReturnEmptyCityInfoResponseIfDBThrowsException() {
-            when(cityRepository.findByCityName("PUNE")).thenThrow(RuntimeException.class);
+        void shouldThrowExceptionIfDBThrowsException() throws CityNotFoundException {
+            doAnswer((invocation) -> {
+                throw new ConnectException("Connection refused");
+            }).when(cityRepository).findByCityName("PUNE");
 
-            CityInfoResponse cityInfoResponse = cityService.getCityInfo("pune");
-
-            assertEquals(CityInfoResponse.builder().build(), cityInfoResponse);
+            assertThrows(ConnectException.class, () -> {
+                cityService.getCityInfo("pune");
+            });
         }
 
         @Test
-        void shouldReturnEmptyWeatherIfWeatherAPIFails() throws IOException {
+        void shouldReturnEmptyWeatherIfWeatherAPIFails() throws Exception {
             Object sunriseAndSunsetResponse = objectMapper.readValue(new File("src/test/resources/responses/sunriseAndSunsetResponse.json"), Map.class);
             City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             CityInfoResponse expectedResponse = CityInfoResponse.builder()
@@ -87,7 +89,7 @@ class CityServiceTest {
         }
 
         @Test
-        void shouldReturnEmptySunsetSunriseIfSunsetSunriseAPIFails() throws IOException {
+        void shouldReturnEmptySunsetSunriseIfSunsetSunriseAPIFails() throws Exception {
             Object weather = objectMapper.readValue(new File("src/test/resources/responses/weatherResponse.json"), Map.class);
             City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
             CityInfoResponse expectedResponse = CityInfoResponse.builder()
@@ -107,7 +109,7 @@ class CityServiceTest {
         }
 
         @Test
-        void shouldReturnAllData() throws IOException {
+        void shouldReturnAllData() throws Exception {
             Object weather = objectMapper.readValue(new File("src/test/resources/responses/weatherResponse.json"), Map.class);
             Object sunriseAndSunsetResponse = objectMapper.readValue(new File("src/test/resources/responses/sunriseAndSunsetResponse.json"), Map.class);
             City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
