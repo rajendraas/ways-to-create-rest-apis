@@ -6,6 +6,7 @@ import io.github.rajendrasatpute.samplespringbootapi.client.SunriseSunsetClient;
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
 import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
 import io.github.rajendrasatpute.samplespringbootapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.exception.CityAlreadyExistsException;
 import io.github.rajendrasatpute.samplespringbootapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringbootapi.model.City;
 import io.github.rajendrasatpute.samplespringbootapi.repository.CityRepository;
@@ -131,8 +132,9 @@ class CityServiceTest {
     @Nested
     class AddCity {
         @Test
-        void shouldSaveCityInDB() {
+        void shouldSaveCityInDB() throws CityAlreadyExistsException {
             City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of());
 
             cityService.addCity(NewCityRequest.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build());
 
@@ -140,11 +142,11 @@ class CityServiceTest {
         }
 
         @Test
-        void shouldThrowExceptionWhenThrown() {
+        void shouldThrowCityAlreadyExistsExceptionWhenCityCoordinatesAreAlreadyPresent() {
             City city = City.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build();
-            doThrow(RuntimeException.class).when(cityRepository).save(city);
+            when(cityRepository.findByCityName("PUNE")).thenReturn(List.of(city));
 
-            assertThrows(RuntimeException.class, () -> {
+            assertThrows(CityAlreadyExistsException.class, () -> {
                 cityService.addCity(NewCityRequest.builder().cityName("PUNE").latitude("18.516726").longitude("73.856255").build());
             });
         }

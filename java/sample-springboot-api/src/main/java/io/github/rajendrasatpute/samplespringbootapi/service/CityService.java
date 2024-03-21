@@ -5,6 +5,7 @@ import io.github.rajendrasatpute.samplespringbootapi.client.SunriseSunsetClient;
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
 import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
 import io.github.rajendrasatpute.samplespringbootapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.exception.CityAlreadyExistsException;
 import io.github.rajendrasatpute.samplespringbootapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringbootapi.model.City;
 import io.github.rajendrasatpute.samplespringbootapi.repository.CityRepository;
@@ -41,13 +42,17 @@ public class CityService {
                 .build();
     }
 
-    public void addCity(NewCityRequest newCityRequest) {
-        City city = City.builder()
-                .cityName(newCityRequest.getCityName().toUpperCase())
-                .latitude(newCityRequest.getLatitude())
-                .longitude(newCityRequest.getLongitude())
-                .build();
-        cityRepository.save(city);
+    public void addCity(NewCityRequest newCityRequest) throws CityAlreadyExistsException {
+        if (null == getCityCoordinates(newCityRequest.getCityName())) {
+            City city = City.builder()
+                    .cityName(newCityRequest.getCityName().toUpperCase())
+                    .latitude(newCityRequest.getLatitude())
+                    .longitude(newCityRequest.getLongitude())
+                    .build();
+            cityRepository.save(city);
+        } else {
+            throw new CityAlreadyExistsException(newCityRequest.getCityName());
+        }
     }
 
     public void updateCityCoordinates(String cityName, UpdateCityRequest updateCityRequest) throws CityNotFoundException {

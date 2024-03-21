@@ -3,6 +3,7 @@ package io.github.rajendrasatpute.samplespringbootapi.controller;
 import io.github.rajendrasatpute.samplespringbootapi.dto.CityInfoResponse;
 import io.github.rajendrasatpute.samplespringbootapi.dto.NewCityRequest;
 import io.github.rajendrasatpute.samplespringbootapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringbootapi.exception.CityAlreadyExistsException;
 import io.github.rajendrasatpute.samplespringbootapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringbootapi.service.CityService;
 import org.junit.jupiter.api.Nested;
@@ -84,6 +85,17 @@ class CityControllerTest {
             mockMvc.perform(
                     post("/city").content("{\"latitude\":\"118.516726\",\"longitude\":\"73.856255\",\"cityName\":\"Pune\"}").contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void shouldReturnConflictIfCityAlreadyExists() throws Exception {
+            NewCityRequest request = NewCityRequest.builder().cityName("Pune").latitude("18.516726").longitude("73.856255").build();
+            doThrow(new CityAlreadyExistsException("pune")).when(cityService).addCity(request);
+            mockMvc.perform(
+                    post("/city").content("{\"latitude\":\"18.516726\",\"longitude\":\"73.856255\",\"cityName\":\"Pune\"}").contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isConflict());
+
+            verify(cityService, times(1)).addCity(request);
         }
 
         @Test
