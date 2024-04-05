@@ -73,5 +73,21 @@ var _ = Describe("Repository Test", func() {
 
 			Expect(err).ToNot(BeNil())
 		})
+
+		It("should save city coordinates", func() {
+			city := model.City{
+				CityName:  "BANGALORE",
+				Latitude:  "12.971599",
+				Longitude: "77.594566",
+			}
+
+			mockSQL.ExpectBegin()
+			mockSQL.ExpectExec("^INSERT INTO `cities` (.+)$").WithArgs("BANGALORE", "12.971599", "77.594566").WillReturnResult(sqlmock.NewResult(1, 1))
+			mockSQL.ExpectCommit()
+
+			err := cityRepository.AddCity(city)
+
+			Expect(err).To(BeNil())
+		})
 	})
 })

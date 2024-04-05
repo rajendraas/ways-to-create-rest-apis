@@ -39,6 +39,20 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
+// AddCityCoordinates mocks base method.
+func (m *MockService) AddCityCoordinates(request model.AddCityRequest) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddCityCoordinates", request)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddCityCoordinates indicates an expected call of AddCityCoordinates.
+func (mr *MockServiceMockRecorder) AddCityCoordinates(request any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCityCoordinates", reflect.TypeOf((*MockService)(nil).AddCityCoordinates), request)
+}
+
 // GetCityInfo mocks base method.
 func (m *MockService) GetCityInfo(cityName string) model.Response {
 	m.ctrl.T.Helper()

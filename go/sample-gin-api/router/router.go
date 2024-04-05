@@ -9,5 +9,6 @@ func SetupRouter(cityController controller.Controller) *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/city/:cityName", cityController.CityInfoHandler)
+	router.POST("/city", cityController.AddCityHandler)
 	return router
 }

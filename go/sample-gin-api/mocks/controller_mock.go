@@ -39,6 +39,18 @@ func (m *MockController) EXPECT() *MockControllerMockRecorder {
 	return m.recorder
 }
 
+// AddCityHandler mocks base method.
+func (m *MockController) AddCityHandler(ctx *gin.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "AddCityHandler", ctx)
+}
+
+// AddCityHandler indicates an expected call of AddCityHandler.
+func (mr *MockControllerMockRecorder) AddCityHandler(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCityHandler", reflect.TypeOf((*MockController)(nil).AddCityHandler), ctx)
+}
+
 // CityInfoHandler mocks base method.
 func (m *MockController) CityInfoHandler(ctx *gin.Context) {
 	m.ctrl.T.Helper()

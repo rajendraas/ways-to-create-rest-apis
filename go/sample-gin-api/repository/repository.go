@@ -7,6 +7,7 @@ import (
 
 type Repository interface {
 	FindCity(cityName string) (*model.City, error)
+	AddCity(city model.City) error
 }
 
 type repository struct {
@@ -25,4 +26,9 @@ func (db *repository) FindCity(cityName string) (*model.City, error) {
 	}
 
 	return &city, nil
+}
+
+func (db *repository) AddCity(city model.City) error {
+	result := db.connection.Create(&city)
+	return result.Error
 }

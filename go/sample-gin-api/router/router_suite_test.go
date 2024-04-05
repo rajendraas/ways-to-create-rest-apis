@@ -27,11 +27,22 @@ var _ = Describe("Router Test", func() {
 		mockController = gomock.NewController(GinkgoT())
 		cityControllerMock = mock.NewMockController(mockController)
 	})
-	Context("City endpoint", func() {
+	Context("City info endpoint", func() {
 		It("should call handler function when API is called", func() {
 			cityControllerMock.EXPECT().CityInfoHandler(gomock.Any()).Times(1)
 			appRouter := router.SetupRouter(cityControllerMock)
 			req, _ := http.NewRequest("GET", "/city/pune", nil)
+			testHttp := httptest.NewRecorder()
+			appRouter.ServeHTTP(testHttp, req)
+			Expect(testHttp.Result().StatusCode).To(Equal(http.StatusOK))
+		})
+	})
+
+	Context("Add city endpoint", func() {
+		It("should call handler function when API is called", func() {
+			cityControllerMock.EXPECT().AddCityHandler(gomock.Any()).Times(1)
+			appRouter := router.SetupRouter(cityControllerMock)
+			req, _ := http.NewRequest("POST", "/city", nil)
 			testHttp := httptest.NewRecorder()
 			appRouter.ServeHTTP(testHttp, req)
 			Expect(testHttp.Result().StatusCode).To(Equal(http.StatusOK))

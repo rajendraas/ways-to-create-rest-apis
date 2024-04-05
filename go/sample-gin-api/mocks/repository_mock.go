@@ -39,16 +39,18 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
-// CloseDBConnection mocks base method.
-func (m *MockRepository) CloseDBConnection() {
+// AddCity mocks base method.
+func (m *MockRepository) AddCity(city model.City) error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "CloseDBConnection")
+	ret := m.ctrl.Call(m, "AddCity", city)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// CloseDBConnection indicates an expected call of CloseDBConnection.
-func (mr *MockRepositoryMockRecorder) CloseDBConnection() *gomock.Call {
+// AddCity indicates an expected call of AddCity.
+func (mr *MockRepositoryMockRecorder) AddCity(city any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CloseDBConnection", reflect.TypeOf((*MockRepository)(nil).CloseDBConnection))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCity", reflect.TypeOf((*MockRepository)(nil).AddCity), city)
 }
 
 // FindCity mocks base method.
