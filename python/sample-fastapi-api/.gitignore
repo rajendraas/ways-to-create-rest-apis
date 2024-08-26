@@ -1,0 +1,7 @@
+.fastapienv
+
+### VS Code ###
+.vscode/
+.idea
+
+*.pyc
