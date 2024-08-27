@@ -94,6 +94,23 @@ services:
     stdin_open: true
     tty: true
 
+  fastapi-app:
+    depends_on:
+      sample-db:
+        condition: service_healthy
+    build: ../python/sample-fastapi-api
+    restart: on-failure
+    env_file: .env
+    ports:
+      - $FASTAPI_LOCAL_PORT:$FASTAPI_DOCKER_PORT
+    environment:
+      - MYSQLDB_HOST=$MYSQLDB_HOST
+      - MYSQLDB_USER=$MYSQLDB_USER
+      - MYSQLDB_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQLDB_DATABASE=$MYSQLDB_DATABASE
+    stdin_open: true
+    tty: true
+
   nginx:
     image: nginx:1.25.3
     restart: unless-stopped
