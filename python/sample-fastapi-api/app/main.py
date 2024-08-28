@@ -7,3 +7,8 @@ load_dotenv()
 
 app = FastAPI()
 app.include_router(router.city_router)
+
+
+@app.get("/health")
+def get_health_status():
+    return {"status": "healthy"}
