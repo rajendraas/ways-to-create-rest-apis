@@ -90,6 +90,15 @@ You can access each of the APIs with URLs as mentioned in the table below.
 | 2  |            | Spring MVC  | http://localhost:8080/sample-springmvc-api/city/pune | http://localhost:8081/sample-springmvc-api/city/pune | http://localhost:80/springmvc-app/sample-springmvc-api/city/pune |
 | 3  | JavaScript | ExpressJS   | http://localhost:3000/city/pune                      | http://localhost:3000/city/pune                      | http://localhost:80/express-app/city/pune                        |
 | 4  | Go         | Gin         | http://localhost:8080/city/pune                      | http://localhost:8082/city/pune                      | http://localhost:80/gin-app/city/pune                            |
+| 5  | Python     | FastAPI     | http://localhost:8000/city/pune                      | http://localhost:8000/city/pune                      | http://localhost:80/fastapi-app/city/pune                        |
 
+## Current API implementation status
 
+| Sr | Language   | Framework   | GET | POST | PUT | DELETE |
+|----|------------|-------------|-----|------|-----|--------|
+| 1  | Java       | Spring Boot | Y   | Y    | Y   | Y      |
+| 2  | Java       | Spring MVC  | Y   | -    | -   | -      |
+| 3  | JavaScript | ExpressJS   | Y   | -    | -   | -      |
+| 4  | Go         | Gin         | Y   | Y    | -   | -      |
+| 5  | Python     | FastAPI     | Y   | -    | -   | -      |
 
