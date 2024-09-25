@@ -7,7 +7,7 @@ This project contains REST API implementation example with FastAPI. You'll need 
 Before you start the server, please start the MySQL server.
 
 To run the server locally -
-`fastapi dev main.py`
+`fastapi dev app/main.py`
 
 You don't need to run any specific server to run this project, like we need Tomcat server in some Java based REST API implementation.
 

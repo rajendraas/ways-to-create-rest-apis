@@ -102,3 +102,12 @@ You can access each of the APIs with URLs as mentioned in the table below.
 | 4  | Go         | Gin         | Y   | Y    | -   | -      |
 | 5  | Python     | FastAPI     | Y   | -    | -   | -      |
 
+## Other status
+
+| Sr | Language   | Framework   | Unit tests | Swagger Docs                                | Logging     |
+|----|------------|-------------|------------|---------------------------------------------|-------------|
+| 1  | Java       | Spring Boot | Y          | /swagger-ui/index.html                      | Only errors |
+| 2  | Java       | Spring MVC  | Y          | /sample-springmvc-api/swagger-ui/index.html | Only errors |
+| 3  | JavaScript | ExpressJS   | Y          | /swagger-ui/                                | -           |
+| 4  | Go         | Gin         | Y          | -                                           | Only errors |
+| 5  | Python     | FastAPI     | -          | /docs                                       | -           |
