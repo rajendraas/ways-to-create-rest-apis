@@ -1,10 +1,12 @@
+from sqlalchemy import String
+from sqlalchemy.orm import mapped_column, Mapped
+
 from .database import Base
-from sqlalchemy import Column, String
 
 
 class City(Base):
     __tablename__ = 'cities'
 
-    city = Column(String, primary_key=True)
-    lat = Column(String)
-    lng = Column(String)
+    city: Mapped[String] = mapped_column(String, primary_key=True)
+    lat: Mapped[String] = mapped_column(String)
+    lng: Mapped[String] = mapped_column(String)

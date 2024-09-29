@@ -17,11 +17,9 @@ class CityService:
         if city_data is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='City not found')
         city = dtos.City(city_data.city, city_data.lat, city_data.lng)
-        api_responses: dict = {}
-        await asyncio.gather(
-            openmeteo_client.get_weather_async(city.lat, city.lng, api_responses),
-            sunrisesunset_client.get_sunrise_sunset_async(city.lat, city.lng, api_responses)
-        )
-        city.set_weather(api_responses.get('weather'))
-        city.set_sunrise_sunset(api_responses.get('sunrise_sunset'))
+        async with asyncio.TaskGroup() as tg:
+            weather = tg.create_task(openmeteo_client.get_weather_async(city.lat, city.lng))
+            sunrise_sunset = tg.create_task(sunrisesunset_client.get_sunrise_sunset_async(city.lat, city.lng))
+        city.set_weather(weather.result())
+        city.set_sunrise_sunset(sunrise_sunset.result())
         return city

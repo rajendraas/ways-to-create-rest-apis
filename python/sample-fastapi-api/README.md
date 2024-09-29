@@ -15,7 +15,7 @@ Access the API through http://localhost:8000/city/pune
 
 ## Unit tests
 
-This project currently does not include any the unit tests for the implementation.
+To run unit test, run `pytest`
 
 
 ## Commands
