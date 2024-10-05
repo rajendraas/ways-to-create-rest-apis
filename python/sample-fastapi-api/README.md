@@ -17,6 +17,8 @@ Access the API through http://localhost:8000/city/pune
 
 To run unit test, run `pytest`
 
+To get coverage report, run `coverage run -m pytest && coverage report -m`
+
 
 ## Commands
 

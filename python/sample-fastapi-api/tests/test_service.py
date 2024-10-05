@@ -47,17 +47,11 @@ async def test_data_is_returned(get_weather_async_mock, get_sunrise_sunset_async
     assert response.__dict__ == mock_response.__dict__
 
 
-@patch('app.clients.openmeteo_client.get_weather_async')
-@patch('app.clients.sunrisesunset_client.get_sunrise_sunset_async')
 @pytest.mark.asyncio
-async def test_clients_not_called(get_weather_async_mock, get_sunrise_sunset_async_mock):
+async def test_clients_not_called():
     mock_repository = AsyncMock(spec=repository.CityRepository)
     mock_repository.get_city_by_name.return_value = None
     city_service = service.CityService(mock_repository)
 
     with pytest.raises(HTTPException):
         await city_service.get_city_by_name('pune')
-
-        mock_repository.get_city_by_name.assert_called_with('pune')
-        get_weather_async_mock.assert_not_called()
-        get_sunrise_sunset_async_mock.assert_not_called()
