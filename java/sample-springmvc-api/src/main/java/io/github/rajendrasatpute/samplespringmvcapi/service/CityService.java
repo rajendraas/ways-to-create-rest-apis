@@ -3,12 +3,18 @@ package io.github.rajendrasatpute.samplespringmvcapi.service;
 import io.github.rajendrasatpute.samplespringmvcapi.client.OpenMeteoClient;
 import io.github.rajendrasatpute.samplespringmvcapi.client.SunriseSunsetClient;
 import io.github.rajendrasatpute.samplespringmvcapi.dto.CityInfoResponse;
+import io.github.rajendrasatpute.samplespringmvcapi.dto.NewCityRequest;
+import io.github.rajendrasatpute.samplespringmvcapi.dto.UpdateCityRequest;
+import io.github.rajendrasatpute.samplespringmvcapi.exception.CityAlreadyExistsException;
+import io.github.rajendrasatpute.samplespringmvcapi.exception.CityNotFoundException;
 import io.github.rajendrasatpute.samplespringmvcapi.model.City;
 import io.github.rajendrasatpute.samplespringmvcapi.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -35,16 +41,54 @@ public class CityService {
                 .weather(weather)
                 .build();
     }
+    
+    public void addCity(NewCityRequest newCityRequest) throws CityAlreadyExistsException {
+        if (null == getCityCoordinates(newCityRequest.getCityName())) {
+            City city = City.builder()
+                    .cityName(newCityRequest.getCityName().toUpperCase())
+                    .latitude(newCityRequest.getLatitude())
+                    .longitude(newCityRequest.getLongitude())
+                    .build();
+            cityRepository.save(city);
+        } else {
+            throw new CityAlreadyExistsException(newCityRequest.getCityName());
+        }
+    }
+
+    public void updateCityCoordinates(String cityName, UpdateCityRequest updateCityRequest) throws CityNotFoundException {
+        if (null != getCityCoordinates(cityName)) {
+            City city = City.builder()
+                    .cityName(cityName.toUpperCase())
+                    .latitude(updateCityRequest.getLatitude())
+                    .longitude(updateCityRequest.getLongitude())
+                    .build();
+
+            cityRepository.save(city);
+        } else {
+            throw new CityNotFoundException(cityName);
+        }
+    }
+
+    public void deleteCityCoordinates(String cityName) throws CityNotFoundException {
+        City cityToDelete = getCityCoordinates(cityName);
+        if (null != cityToDelete) {
+            cityToDelete.setDeletionTimestamp(Timestamp.from(Instant.now()));
+            cityRepository.save(cityToDelete);
+        } else {
+            throw new CityNotFoundException(cityName);
+        }
+    }
 
     private City getCityCoordinates(String cityName) {
         City city = null;
         try {
             List<City> cities = cityRepository.findByCityName(cityName.toUpperCase());
-            if (!cities.isEmpty()) {
+            if (!cities.isEmpty() && !cities.get(0).isDeleted()) {
                 city = cities.get(0);
             }
         } catch (Exception exception) {
-            log.error("Error while fetching city coordinates -  {}", exception);
+            log.error("Error while fetching city coordinates", exception);
+            throw exception;
         }
         return city;
     }

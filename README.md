@@ -97,7 +97,7 @@ You can access each of the APIs with URLs as mentioned in the table below.
 | Sr | Language   | Framework   | GET | POST | PUT | DELETE |
 |----|------------|-------------|-----|------|-----|--------|
 | 1  | Java       | Spring Boot | Y   | Y    | Y   | Y      |
-| 2  | Java       | Spring MVC  | Y   | -    | -   | -      |
+| 2  | Java       | Spring MVC  | Y   | Y    | Y   | Y      |
 | 3  | JavaScript | ExpressJS   | Y   | -    | -   | -      |
 | 4  | Go         | Gin         | Y   | Y    | -   | -      |
 | 5  | Python     | FastAPI     | Y   | -    | -   | -      |
@@ -110,4 +110,10 @@ You can access each of the APIs with URLs as mentioned in the table below.
 | 2  | Java       | Spring MVC  | Y          | /sample-springmvc-api/swagger-ui/index.html | Only errors |
 | 3  | JavaScript | ExpressJS   | Y          | /swagger-ui/                                | -           |
 | 4  | Go         | Gin         | Y          | -                                           | Only errors |
-| 5  | Python     | FastAPI     | -          | /docs                                       | -           |
+| 5  | Python     | FastAPI     | Y          | /docs                                       | -           |
+
+
+# Future implementations
+
+- Authentication middleware
+- Linting

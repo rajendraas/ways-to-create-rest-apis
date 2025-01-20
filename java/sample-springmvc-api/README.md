@@ -14,6 +14,45 @@ Access the API through http://localhost:8080/sample-springmvc-api/city/pune once
 
 Please chech Dockerfile for more information on execution steps in Tomcat server.
 
+## Sample cURLs
+
+### Add city
+
+```sh
+curl --request POST \
+  --url http://localhost:8080/sample-springmvc-api/city \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"latitude": "19.076090",
+	"longitude": "72.877426",
+	"cityName": "Mumbai"
+}'
+```
+
+### Update city
+
+```sh
+curl --request PUT \
+  --url http://localhost:8080/sample-springmvc-api/city/mumbai \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"latitude": "19.076099",
+	"longitude": "72.877426"
+}'
+```
+
+### Get city info
+
+```sh
+curl --request GET --url http://localhost:8080/sample-springmvc-api/city/mumbai
+```
+
+### Delete city
+
+```sh
+curl --request DELETE --url http://localhost:8080/sample-springmvc-api/city/mumbai
+```
+
 ## Unit tests
 
 This project also includes the unit tests for the implementation.
